@@ -30,9 +30,9 @@ d3.json(queryUrl, (data) => {
     L.circle([lat, lng], {
       stroke: "black",
       fillOpacity: 1,
-      color: "red",
-      fillColor: "red",
-      radius: mag * 10000,
+      color: 'black',
+      fillColor: getColor(mag),
+      radius: mag * 50000,
     })
       .bindPopup(`<h2>${place}<br>Magnitude: ${mag}</h2>`)
       .addTo(myMap);
@@ -40,6 +40,27 @@ d3.json(queryUrl, (data) => {
   
 });
 
+function getColor(magnitude) {
+  switch (true) {
+    case magnitude > 5:
+      return '#d7191c';
+      
+    case magnitude > 4:
+      return "#e76818";
+
+    case magnitude > 3:
+      return "#f29e2e";
+
+    case magnitude > 2:
+      return "#f9d057";
+
+    case magnitude > 1:
+      return "#90eb9d";
+
+    case magnitude > 0:
+      return "#00ccbc";
+  }
+}
 
 // Adds Legend
 var legend = L.control({position: "bottomright"});
@@ -52,14 +73,19 @@ legend.onAdd = function (map) {
 
   for (var i = 0; i < grades.length; i++) {
     div.innerHTML +=
-      '<i style="background:' +
-      chooseColor(grades[i] + 1) +
-      '"></i> ' +
-      grades[i] +
-      (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<br>" : "+");
-  }
+      '<i style="background:' + color[i] +
+      '">' + grades[i] + (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<br>" : "+") + '</i>';
+  };
+
+  div.innerHTML += `<style>
+                        .legend {
+                          background: black;
+                          border: 2px solid white;
+                          padding: 4px;
+                      }
+                    </style>`
 
   return div;
 };
-legend.addTo(map);
+legend.addTo(myMap);
 
